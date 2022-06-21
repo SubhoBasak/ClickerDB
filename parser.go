@@ -52,12 +52,12 @@ func Parser(s *string) string {
 	}
 
 	if lex == EMPTY {
-		// Call the action
 		act, err := synChcker(END_TOKEN)
 		if err != EMPTY {
 			return err
 		}
 
+		// Call the action
 		switch act {
 		case ACTION0:
 			return Action0(keywords[0])

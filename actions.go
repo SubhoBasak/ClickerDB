@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 const (
 	ACTION0 = "a0"
 	ACTION1 = "a1"
@@ -14,7 +16,7 @@ func Action0(operator string) string {
 		Clear()
 		return "O:Ok"
 	default:
-		return "E:Invalid operation"
+		return fmt.Sprintf("E:Unexpected %s", operator)
 	}
 }
 
@@ -23,16 +25,14 @@ func Action1(operator string, key string) string {
 	case R:
 		return Read(&key)
 	case D:
-		{
-			Delete(&key)
-			return "O:Ok"
-		}
+		Delete(&key)
+		return "O:Ok"
 	case INC:
 		return Inc(&key)
 	case DEC:
 		return Dec(&key)
 	default:
-		return "E:Invalid operation"
+		return fmt.Sprintf("E:Unexpected %s", operator)
 	}
 }
 
@@ -55,7 +55,7 @@ func Action2(operator string, key string, val string) string {
 	case XOR:
 		return Xor(&key, &val)
 	default:
-		return "E:Invalid operation"
+		return fmt.Sprintf("E:Unexpected %s", operator)
 	}
 }
 
@@ -64,7 +64,7 @@ func Action3(operator string, t string) string {
 	case A:
 		return *AllType(&t)
 	default:
-		return "E:Invalid operation"
+		return fmt.Sprintf("E:Unexpected %s", operator)
 	}
 }
 
@@ -73,6 +73,6 @@ func Action4(operator string, t string, key string, val string) string {
 	case W:
 		return Write(&t, &key, &val)
 	default:
-		return "E:Invalid operation"
+		return fmt.Sprintf("E:Unexpected %s", operator)
 	}
 }

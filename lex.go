@@ -6,6 +6,7 @@ const (
 	TYPE_TOKEN
 	KEY_TOKEN
 	STRING_TOKEN
+	NUMBER_TOKEN
 	END_TOKEN
 )
 
@@ -62,21 +63,28 @@ func Lex(s *string) int {
 	default:
 		{
 			c := (*s)[0]
-			// check if the string starts with a-z or A-Z or _ or not
-			if (c > 64 && c < 92) || (c > 96 && c < 123) || c == '_' {
-				key := true
+			if c > 47 && c < 58 || c == '+' || c == '-' {
+				// check if the string starts with 0-9 or + or -
+				dot := true
+				for _, c := range (*s)[1:] {
+					// check if the following characters are not 0-9 or .
+					if c == '.' && dot {
+						// this is to ensure that . does not appear more than one time
+						dot = false
+					} else if c < 48 && c > 57 {
+						return INVALID_TOKEN
+					}
+				}
+				return NUMBER_TOKEN
+			} else if (c > 64 && c < 92) || (c > 96 && c < 123) || c == '_' {
+				// check if the string starts with a-z or A-Z or _ or not
 				for _, c := range (*s)[1:] {
 					// check if the following characters are not 0-9 and a-z and A-Z and _
 					if (c < 48 && c > 57) && (c < 65 && c > 90) && (c < 97 && c > 122) && c != '_' {
-						key = false
-						break
+						return INVALID_TOKEN
 					}
 				}
-				if key {
-					return KEY_TOKEN
-				} else {
-					return INVALID_TOKEN
-				}
+				return KEY_TOKEN
 			}
 			return INVALID_TOKEN
 		}
