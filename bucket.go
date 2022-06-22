@@ -19,194 +19,148 @@ var typeMap = make(map[string]string)
 func Read(k *string) string {
 	t, ok := typeMap[*k]
 	if !ok {
-		return "E:Key not found"
+		return MSG_KEY_NOT_FOUND
 	}
 
 	switch t {
 	case INT:
-		return fmt.Sprint(i8Map[*k])
+		return fmt.Sprintf("%d:%d", RESP_INT, i8Map[*k])
 	case INT16:
-		return fmt.Sprint(i16Map[*k])
+		return fmt.Sprintf("%d:%d", RESP_INT16, i16Map[*k])
 	case INT32:
-		return fmt.Sprint(i32Map[*k])
+		return fmt.Sprintf("%d:%d", RESP_INT32, i32Map[*k])
 	case FLOAT:
-		return fmt.Sprint(f32Map[*k])
+		return fmt.Sprintf("%d:%f", RESP_FLOAT, f32Map[*k])
 	case FLOAT64:
-		return fmt.Sprint(f64Map[*k])
-	case STRING:
-		return stMap[*k]
+		return fmt.Sprintf("%d:%f", RESP_FLOAT64, f64Map[*k])
 	case BOOL:
-		return fmt.Sprint(blMap[*k])
+		return fmt.Sprintf("%d:%t", RESP_BOOL, blMap[*k])
 	default:
-		return "E:Invalid type"
+		return fmt.Sprintf("%d:%s", RESP_STRING, stMap[*k])
 	}
 }
 
 func Write(t *string, k *string, v *string) string {
 	_, ok := typeMap[*k]
 	if ok {
-		return "E:Key already exist"
+		return MSG_KEY_CONFLICT
 	} else {
 		typeMap[*k] = *t
 	}
 
 	switch *t {
 	case INT:
-		{
-			i, err := strconv.ParseInt(*v, 10, 8)
-			if err == nil {
-				i8Map[*k] = int8(i)
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid int8 value"
-			}
+		i, err := strconv.ParseInt(*v, 10, 8)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT_INVALID
 		}
+		i8Map[*k] = int8(i)
+		return fmt.Sprint(RESP_OK)
 	case INT16:
-		{
-			i, err := strconv.ParseInt(*v, 10, 16)
-			if err == nil {
-				i16Map[*k] = int16(i)
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid int16 value"
-			}
+		i, err := strconv.ParseInt(*v, 10, 16)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT16_INVALID
 		}
+		i16Map[*k] = int16(i)
+		return fmt.Sprint(RESP_OK)
 	case INT32:
-		{
-			i, err := strconv.ParseInt(*v, 10, 32)
-			if err == nil {
-				i32Map[*k] = int32(i)
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid int32 value"
-			}
+		i, err := strconv.ParseInt(*v, 10, 32)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT32_INVALID
 		}
+		i32Map[*k] = int32(i)
+		return fmt.Sprint(RESP_OK)
 	case FLOAT:
-		{
-			f, err := strconv.ParseFloat(*v, 32)
-			if err == nil {
-				f32Map[*k] = float32(f)
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid float32 value"
-			}
+		f, err := strconv.ParseFloat(*v, 32)
+		if err != nil {
+			logger.Println(err)
+			return MSG_FLOAT_INVALID
 		}
+		f32Map[*k] = float32(f)
+		return fmt.Sprint(RESP_OK)
 	case FLOAT64:
-		{
-			f, err := strconv.ParseFloat(*v, 64)
-			if err == nil {
-				f64Map[*k] = f
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid float64 value"
-			}
+		f, err := strconv.ParseFloat(*v, 64)
+		if err != nil {
+			logger.Println(err)
+			return MSG_FLOAT64_INVALID
 		}
-	case STRING:
-		{
-			stMap[*k] = *v
-			return "O:Ok"
-		}
+		f64Map[*k] = f
+		return fmt.Sprint(RESP_OK)
 	case BOOL:
-		{
-			b, err := strconv.ParseBool(*v)
-			if err == nil {
-				blMap[*k] = b
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid bool value"
-			}
+		b, err := strconv.ParseBool(*v)
+		if err != nil {
+			logger.Println(err)
+			return MSG_BOOL_INVALID
 		}
+		blMap[*k] = b
+		return fmt.Sprint(RESP_OK)
 	default:
-		return "E:Invalid type"
+		stMap[*k] = *v
+		return fmt.Sprint(RESP_OK)
 	}
 }
 
 func Put(k *string, v *string) string {
 	t, ok := typeMap[*k]
 	if !ok {
-		return "E:Key not found"
+		return MSG_KEY_NOT_FOUND
 	}
 
 	switch t {
 	case INT:
-		{
-			i, err := strconv.ParseInt(*v, 10, 8)
-			if err == nil {
-				i8Map[*k] = int8(i)
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid int8 value"
-			}
+		i, err := strconv.ParseInt(*v, 10, 8)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT_INVALID
 		}
+		i8Map[*k] = int8(i)
+		return fmt.Sprint(RESP_OK)
 	case INT16:
-		{
-			i, err := strconv.ParseInt(*v, 10, 16)
-			if err == nil {
-				i16Map[*k] = int16(i)
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid int16 value"
-			}
+		i, err := strconv.ParseInt(*v, 10, 16)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT16_INVALID
 		}
+		i16Map[*k] = int16(i)
+		return fmt.Sprint(RESP_OK)
 	case INT32:
-		{
-			i, err := strconv.ParseInt(*v, 10, 32)
-			if err == nil {
-				i32Map[*k] = int32(i)
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid int32 value"
-			}
+		i, err := strconv.ParseInt(*v, 10, 32)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT32_INVALID
 		}
+		i32Map[*k] = int32(i)
+		return fmt.Sprint(RESP_OK)
 	case FLOAT:
-		{
-			f, err := strconv.ParseFloat(*v, 32)
-			if err == nil {
-				f32Map[*k] = float32(f)
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid float32 value"
-			}
+		f, err := strconv.ParseFloat(*v, 32)
+		if err != nil {
+			logger.Println(err)
+			return MSG_FLOAT_INVALID
 		}
+		f32Map[*k] = float32(f)
+		return fmt.Sprint(RESP_OK)
 	case FLOAT64:
-		{
-			f, err := strconv.ParseFloat(*v, 64)
-			if err == nil {
-				f64Map[*k] = f
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid float64 value"
-			}
+		f, err := strconv.ParseFloat(*v, 64)
+		if err != nil {
+			logger.Println(err)
+			return MSG_FLOAT64_INVALID
 		}
-	case STRING:
-		{
-			stMap[*k] = *v
-			return "O:Ok"
-		}
+		f64Map[*k] = f
+		return fmt.Sprint(RESP_OK)
 	case BOOL:
-		{
-			b, err := strconv.ParseBool(*v)
-			if err == nil {
-				blMap[*k] = b
-				return "O:Ok"
-			} else {
-				logger.Println(err)
-				return "E:Invalid bool value"
-			}
+		b, err := strconv.ParseBool(*v)
+		if err != nil {
+			logger.Println(err)
+			return MSG_BOOL_INVALID
 		}
+		blMap[*k] = b
+		return fmt.Sprint(RESP_OK)
 	default:
-		return "E:Invalid type"
+		stMap[*k] = *v
+		return fmt.Sprint(RESP_OK)
 	}
 }
 
@@ -232,14 +186,11 @@ func Delete(k *string) {
 	case FLOAT64:
 		delete(f64Map, *k)
 		return
-	case STRING:
-		delete(stMap, *k)
-		return
 	case BOOL:
 		delete(blMap, *k)
 		return
 	default:
-		return
+		delete(stMap, *k)
 	}
 }
 
@@ -251,7 +202,7 @@ func AllType(t *string) *string {
 		for k, v := range i8Map {
 			output += fmt.Sprintf("%s:%d;", k, v)
 		}
-		return &output
+		return &output // TODO - multiple output
 	case INT16:
 		for k, v := range i16Map {
 			output += fmt.Sprintf("%s:%d;", k, v)
@@ -272,18 +223,15 @@ func AllType(t *string) *string {
 			output += fmt.Sprintf("%s:%f;", k, v)
 		}
 		return &output
-	case STRING:
-		for k, v := range stMap {
-			output += fmt.Sprintf(`%s:"%s";`, k, v)
-		}
-		return &output
 	case BOOL:
 		for k, v := range blMap {
 			output += fmt.Sprintf("%s:%t;", k, v)
 		}
 		return &output
 	default:
-		output = "E:Invalid type"
+		for k, v := range stMap {
+			output += fmt.Sprintf(`%s:"%s";`, k, v)
+		}
 		return &output
 	}
 }
@@ -303,164 +251,174 @@ func Clear() {
 func Add(k *string, v *string) string {
 	t, ok := typeMap[*k]
 	if !ok {
-		return "E:Key not found"
+		return MSG_KEY_NOT_FOUND
 	}
 
 	switch t {
 	case INT:
 		i, err := strconv.ParseInt(*v, 10, 8)
-		if err == nil {
-			i8Map[*k] += int8(i)
-			return fmt.Sprint(i8Map[*k])
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT_INVALID
 		}
-		logger.Println(err)
-		return "E:Invalid int8 value"
+		tmp := i8Map[*k] + int8(i)
+		i8Map[*k] = tmp
+		return fmt.Sprintf("%d:%d", RESP_INT, tmp)
 	case INT16:
 		i, err := strconv.ParseInt(*v, 10, 16)
-		if err == nil {
-			i16Map[*k] += int16(i)
-			return fmt.Sprint(i16Map[*k])
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT16_INVALID
 		}
-		logger.Println(err)
-		return "E:Invalid int16 value"
+		tmp := i16Map[*k] + int16(i)
+		i16Map[*k] = tmp
+		return fmt.Sprintf("%d:%d", RESP_INT16, tmp)
 	case INT32:
 		i, err := strconv.ParseInt(*v, 10, 32)
-		if err == nil {
-			i32Map[*k] += int32(i)
-			return fmt.Sprint(i32Map[*k])
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT32_INVALID
 		}
-		logger.Println(err)
-		return "E:Invalid int32 value"
+		tmp := i32Map[*k] + int32(i)
+		i32Map[*k] = tmp
+		return fmt.Sprintf("%d:%d", RESP_INT32, tmp)
 	case FLOAT:
 		f, err := strconv.ParseFloat(*v, 32)
-		if err == nil {
-			f32Map[*k] += float32(f)
-			return fmt.Sprint(f32Map[*k])
+		if err != nil {
+			logger.Println(err)
+			return MSG_FLOAT_INVALID
 		}
-		logger.Println(err)
-		return "E:Invalid float value"
+		tmp := f32Map[*k] + float32(f)
+		f32Map[*k] = tmp
+		return fmt.Sprintf("%d:%f", RESP_FLOAT, tmp)
 	case FLOAT64:
 		f, err := strconv.ParseFloat(*v, 64)
-		if err == nil {
-			f64Map[*k] += float64(f)
-			return fmt.Sprint(f64Map[*k])
+		if err != nil {
+			logger.Println(err)
+			return MSG_FLOAT64_INVALID
 		}
-		logger.Println(err)
-		return "E:Invalid float64 value"
+		tmp := f64Map[*k] + f
+		f64Map[*k] = tmp
+		return fmt.Sprintf("%d:%f", RESP_FLOAT64, tmp)
 	default:
-		return fmt.Sprintf("E:Can't perform ADD on type %s", t)
+		return fmt.Sprintf("%d:Can't perform ADD on type %s", RESP_TYPE_ERROR, t)
 	}
 }
 
 func Sub(k *string, v *string) string {
 	t, ok := typeMap[*k]
 	if !ok {
-		return "E:Key not found"
+		return fmt.Sprintf("%d:Key not found", RESP_KEY_ERROR)
 	}
 
 	switch t {
 	case INT:
 		i, err := strconv.ParseInt(*v, 10, 8)
-		if err == nil {
-			i8Map[*k] -= int8(i)
-			return fmt.Sprint(i8Map[*k])
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT_INVALID
 		}
-		logger.Println(err)
-		return "E:Invalid int8 value"
+		tmp := i8Map[*k] - int8(i)
+		i8Map[*k] = tmp
+		return fmt.Sprintf("%d:%d", RESP_INT, tmp)
 	case INT16:
 		i, err := strconv.ParseInt(*v, 10, 16)
-		if err == nil {
-			i16Map[*k] -= int16(i)
-			return fmt.Sprint(i16Map[*k])
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT16_INVALID
 		}
-		logger.Println(err)
-		return "E:Invalid int16 value"
+		tmp := i16Map[*k] - int16(i)
+		i16Map[*k] = tmp
+		return fmt.Sprintf("%d:%d", RESP_INT16, tmp)
 	case INT32:
 		i, err := strconv.ParseInt(*v, 10, 32)
-		if err == nil {
-			i32Map[*k] -= int32(i)
-			return fmt.Sprint(i32Map[*k])
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT32_INVALID
 		}
-		logger.Println(err)
-		return "E:Invalid int32 value"
+		tmp := i32Map[*k] - int32(i)
+		i32Map[*k] = tmp
+		return fmt.Sprintf("%d:%d", RESP_INT32, tmp)
 	case FLOAT:
 		f, err := strconv.ParseFloat(*v, 32)
-		if err == nil {
-			f32Map[*k] -= float32(f)
-			return fmt.Sprint(f32Map[*k])
+		if err != nil {
+			logger.Println(err)
+			return MSG_FLOAT_INVALID
 		}
-		logger.Println(err)
-		return "E:Invalid float value"
+		tmp := f32Map[*k] - float32(f)
+		f32Map[*k] = tmp
+		return fmt.Sprintf("%d:%f", RESP_FLOAT, tmp)
 	case FLOAT64:
 		f, err := strconv.ParseFloat(*v, 64)
-		if err == nil {
-			f64Map[*k] -= float64(f)
-			return fmt.Sprint(f64Map[*k])
+		if err != nil {
+			logger.Println(err)
+			return MSG_FLOAT64_INVALID
 		}
-		logger.Println(err)
-		return "E:Invalid float64 value"
+		tmp := f64Map[*k] - f
+		f64Map[*k] = tmp
+		return fmt.Sprintf("%d:%f", RESP_FLOAT64, tmp)
 	default:
-		return fmt.Sprintf("E:Can't perform SUB on type %s", t)
+		return fmt.Sprintf("%d:Can't perform SUB on type %s", RESP_TYPE_ERROR, t)
 	}
 }
 
 func Div(k *string, v *string) string {
 	t, ok := typeMap[*k]
 	if !ok {
-		return "E:Key not found"
+		return MSG_KEY_NOT_FOUND
 	}
 
 	switch t {
 	case INT:
 		i, err := strconv.ParseInt(*v, 10, 8)
-		if err == nil {
-			i8Map[*k] += int8(i)
-			return fmt.Sprint(i8Map[*k])
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT_INVALID
 		} else if i == 0 {
-			return "E:Can't divide by zero"
+			return MSG_DIV_ZERO
 		}
-		logger.Println(err)
-		return "E:Invalid int8 value"
+		i8Map[*k] += int8(i)
+		return fmt.Sprint(i8Map[*k])
 	case INT16:
 		i, err := strconv.ParseInt(*v, 10, 16)
-		if err == nil {
+		if err != nil {
 			i16Map[*k] += int16(i)
 			return fmt.Sprint(i16Map[*k])
 		} else if i == 0 {
-			return "E:Can't divide by zero"
+			return MSG_DIV_ZERO
 		}
 		logger.Println(err)
-		return "E:Invalid int16 value"
+		return MSG_INT16_INVALID
 	case INT32:
 		i, err := strconv.ParseInt(*v, 10, 32)
-		if err == nil {
+		if err != nil {
 			i32Map[*k] += int32(i)
 			return fmt.Sprint(i32Map[*k])
 		} else if i == 0 {
-			return "E:Can't divide by zero"
+			return MSG_DIV_ZERO
 		}
 		logger.Println(err)
-		return "E:Invalid int32 value"
+		return MSG_INT32_INVALID
 	case FLOAT:
 		f, err := strconv.ParseFloat(*v, 32)
-		if err == nil {
+		if err != nil {
 			f32Map[*k] += float32(f)
 			return fmt.Sprint(f32Map[*k])
 		} else if f == 0 {
-			return "E:Can't divide by zero"
+			return MSG_DIV_ZERO
 		}
 		logger.Println(err)
-		return "E:Invalid float value"
+		return MSG_FLOAT_INVALID
 	case FLOAT64:
 		f, err := strconv.ParseFloat(*v, 64)
-		if err == nil {
+		if err != nil {
 			f64Map[*k] += float64(f)
 			return fmt.Sprint(f64Map[*k])
 		} else if f == 0 {
-			return "E:Can't divide by zero"
+			return MSG_DIV_ZERO
 		}
 		logger.Println(err)
-		return "E:Invalid float64 value"
+		return MSG_FLOAT64_INVALID
 	default:
 		return fmt.Sprintf("E:Can't perform DIV on type %s", t)
 	}
@@ -469,7 +427,7 @@ func Div(k *string, v *string) string {
 func Mul(k *string, v *string) string {
 	t, ok := typeMap[*k]
 	if !ok {
-		return "E:Key not found"
+		return MSG_KEY_NOT_FOUND
 	}
 
 	switch t {
@@ -480,7 +438,7 @@ func Mul(k *string, v *string) string {
 			return fmt.Sprint(i8Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int8 value"
+		return MSG_INT_INVALID
 	case INT16:
 		i, err := strconv.ParseInt(*v, 10, 16)
 		if err == nil {
@@ -488,7 +446,7 @@ func Mul(k *string, v *string) string {
 			return fmt.Sprint(i16Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int16 value"
+		return MSG_INT16_INVALID
 	case INT32:
 		i, err := strconv.ParseInt(*v, 10, 32)
 		if err == nil {
@@ -496,7 +454,7 @@ func Mul(k *string, v *string) string {
 			return fmt.Sprint(i32Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int32 value"
+		return MSG_INT32_INVALID
 	case FLOAT:
 		f, err := strconv.ParseFloat(*v, 32)
 		if err == nil {
@@ -504,7 +462,7 @@ func Mul(k *string, v *string) string {
 			return fmt.Sprint(f32Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid float value"
+		return MSG_FLOAT_INVALID
 	case FLOAT64:
 		f, err := strconv.ParseFloat(*v, 64)
 		if err == nil {
@@ -512,7 +470,7 @@ func Mul(k *string, v *string) string {
 			return fmt.Sprint(f64Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid float64 value"
+		return MSG_FLOAT64_INVALID
 	default:
 		return fmt.Sprintf("E:Can't perform MUL on type %s", t)
 	}
@@ -521,7 +479,7 @@ func Mul(k *string, v *string) string {
 func Inc(k *string) string {
 	t, ok := typeMap[*k]
 	if !ok {
-		return "E:Key not found"
+		return MSG_KEY_NOT_FOUND
 	}
 
 	switch t {
@@ -548,7 +506,7 @@ func Inc(k *string) string {
 func Dec(k *string) string {
 	t, ok := typeMap[*k]
 	if !ok {
-		return "E:Key not found"
+		return MSG_KEY_NOT_FOUND
 	}
 
 	switch t {
@@ -576,7 +534,7 @@ func Dec(k *string) string {
 func And(k *string, v *string) string {
 	t, ok := typeMap[*k]
 	if !ok {
-		return "E:Key not found"
+		return MSG_KEY_NOT_FOUND
 	}
 
 	switch t {
@@ -587,7 +545,7 @@ func And(k *string, v *string) string {
 			return fmt.Sprint(i8Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int8 value"
+		return MSG_INT_INVALID
 	case INT16:
 		i, err := strconv.ParseInt(*v, 10, 16)
 		if err == nil {
@@ -595,7 +553,7 @@ func And(k *string, v *string) string {
 			return fmt.Sprint(i16Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int16 value"
+		return MSG_INT16_INVALID
 	case INT32:
 		i, err := strconv.ParseInt(*v, 10, 32)
 		if err == nil {
@@ -603,7 +561,7 @@ func And(k *string, v *string) string {
 			return fmt.Sprint(i32Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int32 value"
+		return MSG_INT32_INVALID
 	default:
 		return fmt.Sprintf("E:Can't perform AND on type %s", t)
 	}
@@ -612,7 +570,7 @@ func And(k *string, v *string) string {
 func Or(k *string, v *string) string {
 	t, ok := typeMap[*k]
 	if !ok {
-		return "E:Key not found"
+		return MSG_KEY_NOT_FOUND
 	}
 
 	switch t {
@@ -623,7 +581,7 @@ func Or(k *string, v *string) string {
 			return fmt.Sprint(i8Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int8 value"
+		return MSG_INT_INVALID
 	case INT16:
 		i, err := strconv.ParseInt(*v, 10, 16)
 		if err == nil {
@@ -631,7 +589,7 @@ func Or(k *string, v *string) string {
 			return fmt.Sprint(i16Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int16 value"
+		return MSG_INT16_INVALID
 	case INT32:
 		i, err := strconv.ParseInt(*v, 10, 32)
 		if err == nil {
@@ -639,7 +597,7 @@ func Or(k *string, v *string) string {
 			return fmt.Sprint(i32Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int32 value"
+		return MSG_INT32_INVALID
 	default:
 		return fmt.Sprintf("E:Can't perform OR on type %s", t)
 	}
@@ -648,7 +606,7 @@ func Or(k *string, v *string) string {
 func Xor(k *string, v *string) string {
 	t, ok := typeMap[*k]
 	if !ok {
-		return "E:Key not found"
+		return MSG_KEY_NOT_FOUND
 	}
 
 	switch t {
@@ -659,7 +617,7 @@ func Xor(k *string, v *string) string {
 			return fmt.Sprint(i8Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int8 value"
+		return MSG_INT_INVALID
 	case INT16:
 		i, err := strconv.ParseInt(*v, 10, 16)
 		if err == nil {
@@ -667,7 +625,7 @@ func Xor(k *string, v *string) string {
 			return fmt.Sprint(i16Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int16 value"
+		return MSG_INT16_INVALID
 	case INT32:
 		i, err := strconv.ParseInt(*v, 10, 32)
 		if err == nil {
@@ -675,7 +633,7 @@ func Xor(k *string, v *string) string {
 			return fmt.Sprint(i32Map[*k])
 		}
 		logger.Println(err)
-		return "E:Invalid int32 value"
+		return MSG_INT32_INVALID
 	default:
 		return fmt.Sprintf("E:Can't perform XOR on type %s", t)
 	}

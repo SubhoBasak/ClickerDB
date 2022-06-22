@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func Parser(s *string) string {
+func Execute(s *string) string {
 	var keywords []string
 	var strval byte = 0
 	var token int

@@ -69,7 +69,7 @@ func connHandler(conn net.Conn) {
 			conn.Write([]byte("BAD QUERY"))
 		}
 		log.Print(buff)
-		conn.Write([]byte(Parser(&buff)))
+		conn.Write([]byte(Execute(&buff)))
 	}
 
 	logger.Println("Closed one connection") // TODO: remove this log statement
