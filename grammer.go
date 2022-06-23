@@ -59,6 +59,7 @@ func SyntaxChecker() (_SyntaxChecker func(int) (string, string)) {
 				return EMPTY, fmt.Sprintf("%d:Expecting ; after the value", RESP_SYNTAX_ERROR)
 			}
 		case _state3:
+			logger.Print(token)
 			if token == STRING_TOKEN {
 				curState = _state4
 			} else if token == NUMBER_TOKEN {

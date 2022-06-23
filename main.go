@@ -68,7 +68,6 @@ func connHandler(conn net.Conn) {
 			logger.Println(err)
 			conn.Write([]byte("BAD QUERY"))
 		}
-		log.Print(buff)
 		conn.Write([]byte(Execute(&buff)))
 	}
 

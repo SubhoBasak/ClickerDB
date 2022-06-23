@@ -13,6 +13,8 @@ var i32Map = make(map[string]int32)
 var stMap = make(map[string]string)
 var f32Map = make(map[string]float32)
 var f64Map = make(map[string]float64)
+
+// meta data
 var typeMap = make(map[string]string)
 
 // CRUD operations

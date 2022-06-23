@@ -1,67 +1,30 @@
 import socket
 
 
-class StickerException(Exception):
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
-
-
 class StickerClient:
     def __init__(self) -> None:
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    def __parseResponse(self, o: str) -> str:
-        if o.startswith('E'):
-            raise StickerException(o[2:])
-        elif o.startswith('O'):
-            return o
-
-    def __checkKey(self, k: str) -> bool:
-        return False
+        '''
+            Initialize a new TCP socket to connect with the db server
+        '''
+        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self, host: str = '127.0.0.1', port: int = 3778) -> None:
-        self.socket.connect((host, port))
+        '''
+            Create a connection with the TCP db server.
+        '''
+        self.__socket.connect((host, port))
+
+    def close(self):
+        self.__socket.close()
 
     def query(self, q: str, buf: int = 1024) -> str:
+        '''
+            Run the raw query `q` and return the string with raw
+            response data. By default the buffer size is of 1024
+            bytes. It can be change using the buf parameter.
+        '''
         if not q.endswith(';'):
+            # it add a ; at the end of the query if not present
             q += ';'
-        self.socket.send(q.encode())
-        return self.__parseResponse()
-
-    # CRUD operations
-    def read(self, k: str, buf: int = 1024) -> str:
-        self.socket.send(f'R {k};'.encode())
-        return self.__parseResponse()
-
-    def write(self, k: str, t: str, v, buf: int = 1024) -> bool:
-        self.socket.send(f'W {k} {t} {v};'.encode())
-        return self.__parseResponse()
-
-    def put(self, k: str, v, buf: int = 1024) -> bool:
-        self.socket.send(f'P {k} {v};'.encode())
-        return self.__parseResponse()
-
-    def delete(self, k: str) -> None:
-        pass
-
-    def all(self) -> str:
-        pass
-
-    def allType(self, t: str) -> str:
-        pass
-
-    def clear(self) -> None:
-        pass
-
-    # Arithmetic operations
-    def add(self, k: str, v: str):
-        pass
-
-    def sub(self, k: str, v: str):
-        pass
-
-    def mul(self, k: str, v: str):
-        pass
-
-    def div(self, k: str, v: str):
-        pass
+        self.__socket.send(q.encode())
+        return self.__socket.recv(buf).decode()
