@@ -18,7 +18,7 @@ func Execute(s *string) string {
 			if lex != EMPTY {
 				token = Lex(&lex)
 				if token == INVALID_TOKEN {
-					return fmt.Sprintf("E:Unknown keyword : %s", lex)
+					return fmt.Sprintf("%d:Unknown keyword : %s", RESP_IDENTIFIER_ERROR, lex)
 				}
 				_, err := synChcker(token)
 				if err == EMPTY {
@@ -34,7 +34,7 @@ func Execute(s *string) string {
 				if lex == EMPTY {
 					strval = chr
 				} else {
-					return fmt.Sprintf("E:Unexpected %c after %s", chr, lex)
+					return fmt.Sprintf("%d:Unexpected %c after %s", RESP_SYNTAX_ERROR, chr, lex)
 				}
 			} else if strval == chr {
 				_, err := synChcker(STRING_TOKEN)
@@ -70,14 +70,14 @@ func Execute(s *string) string {
 		case ACTION4:
 			return Action4(keywords[0], keywords[1], keywords[2], keywords[3])
 		default:
-			return "E:Invalid syntax meaning"
+			return fmt.Sprintf("%d:Invalid syntax meaning", RESP_LOGICAL_ERROR)
 		}
 	} else {
 		if strval != 0 {
-			return fmt.Sprintf("E:Missing %c", strval)
+			return fmt.Sprintf("%d:Missing %c", RESP_SYNTAX_ERROR, strval)
 		} else {
 			logger.Printf("Parse error : %s", *s)
-			return "E:Parse error"
+			return fmt.Sprintf("%d:Parse error", RESP_SYNTAX_ERROR)
 		}
 	}
 }

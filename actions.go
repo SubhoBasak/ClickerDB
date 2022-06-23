@@ -14,9 +14,9 @@ func Action0(operator string) string {
 	switch operator {
 	case X:
 		Clear()
-		return "O:Ok"
+		return MSG_OK
 	default:
-		return fmt.Sprintf("E:Unexpected %s", operator)
+		return fmt.Sprintf("%d:Unexpected %s", RESP_SYNTAX_ERROR, operator)
 	}
 }
 
@@ -26,13 +26,13 @@ func Action1(operator string, key string) string {
 		return Read(&key)
 	case D:
 		Delete(&key)
-		return "O:Ok"
+		return MSG_OK
 	case INC:
 		return Inc(&key)
 	case DEC:
 		return Dec(&key)
 	default:
-		return fmt.Sprintf("E:Unexpected %s", operator)
+		return fmt.Sprintf("%d:Unexpected %s", RESP_SYNTAX_ERROR, operator)
 	}
 }
 
@@ -55,7 +55,7 @@ func Action2(operator string, key string, val string) string {
 	case XOR:
 		return Xor(&key, &val)
 	default:
-		return fmt.Sprintf("E:Unexpected %s", operator)
+		return fmt.Sprintf("%d:Unexpected %s", RESP_SYNTAX_ERROR, operator)
 	}
 }
 
@@ -64,7 +64,7 @@ func Action3(operator string, t string) string {
 	case A:
 		return *AllType(&t)
 	default:
-		return fmt.Sprintf("E:Unexpected %s", operator)
+		return fmt.Sprintf("%d:Unexpected %s", RESP_SYNTAX_ERROR, operator)
 	}
 }
 
@@ -73,6 +73,6 @@ func Action4(operator string, t string, key string, val string) string {
 	case W:
 		return Write(&t, &key, &val)
 	default:
-		return fmt.Sprintf("E:Unexpected %s", operator)
+		return fmt.Sprintf("%d:Unexpected %s", RESP_SYNTAX_ERROR, operator)
 	}
 }
