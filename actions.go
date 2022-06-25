@@ -54,6 +54,10 @@ func Action2(operator string, key string, val string) string {
 		return Or(&key, &val)
 	case XOR:
 		return Xor(&key, &val)
+	case LSHIFT:
+		return LShift(&key, &val)
+	case RSHIFT:
+		return RShift(&key, &val)
 	default:
 		return fmt.Sprintf("%d:Unexpected %s", RESP_SYNTAX_ERROR, operator)
 	}

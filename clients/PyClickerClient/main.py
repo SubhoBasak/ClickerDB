@@ -1,7 +1,7 @@
 import socket
 
 
-class StickerClient:
+class ClickerClient:
     def __init__(self) -> None:
         '''
             Initialize a new TCP socket to connect with the db server
@@ -26,5 +26,6 @@ class StickerClient:
         if not q.endswith(';'):
             # it add a ; at the end of the query if not present
             q += ';'
+        self.__socket.send(str(len(q)).rjust(8, '0').encode())
         self.__socket.send(q.encode())
         return self.__socket.recv(buf).decode()

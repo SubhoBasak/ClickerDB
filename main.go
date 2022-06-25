@@ -5,9 +5,7 @@
 package main
 
 import (
-	"bufio"
 	"flag"
-	"io"
 	"log"
 	"net"
 	"os"
@@ -47,29 +45,22 @@ func main() {
 		conn, err := listener.Accept()
 		if err == nil {
 			// concurrently handle multiple connection over multiple goroutines
-			go connHandler(conn)
+			go connHandler(&conn)
 		} else {
 			logger.Println(err)
 		}
 	}
 }
 
-func connHandler(conn net.Conn) {
-	defer conn.Close()
-	logger.Println("Received new connection") // TODO: remove this log statement
-
+func connHandler(conn *net.Conn) {
+	defer (*conn).Close()
 	for {
-		logger.Println("Waiting for new query") // TODO: remove this log statement
-		buff, err := bufio.NewReader(conn).ReadString(';')
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			logger.Println(err)
-			conn.Write([]byte("BAD QUERY"))
+		result := Execute(conn)
+		if result[0] == 'X' {
+			// if any client don't follow the protocol connection
+			// will be closed without any error message
+			return
 		}
-		conn.Write([]byte(Execute(&buff)))
+		(*conn).Write([]byte(result))
 	}
-
-	logger.Println("Closed one connection") // TODO: remove this log statement
 }

@@ -1,6 +1,6 @@
 const net = require("net");
 
-class StickerClient {
+class ClickerClient {
   #socket;
   #result;
 
@@ -16,6 +16,7 @@ class StickerClient {
 
   query(q) {
     if (!q.endsWith(";")) q += ";";
+    this.#socket.write();
     this.#socket.write(q);
   }
 
@@ -24,4 +25,4 @@ class StickerClient {
   }
 }
 
-module.exports = StickerClient;
+module.exports = ClickerClient;

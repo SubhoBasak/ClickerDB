@@ -1,54 +1,89 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+	"net"
+	"strconv"
+)
 
-func Execute(s *string) string {
+func Execute(conn *net.Conn) string {
 	var keywords []string
 	var strval byte = 0
+	var cur int64 = 0
 	var token int
+	var s string
 
 	lex := EMPTY
-	ln := len(*s)
 	synChcker := SyntaxChecker()
+	size := make([]byte, 8)
+	buff := make([]byte, 128)
 
-	for i := 0; i < ln; i++ {
-		chr := (*s)[i]
+	// before parsing the query text it will ask for the length of query
+	_, err := (*conn).Read(size)
+	if err != nil {
+		logger.Print(err)
+		return "X"
+	}
 
-		if (chr == SPACE || chr == TAB || chr == LINE || chr == END) && strval == 0 {
-			if lex != EMPTY {
-				token = Lex(&lex)
-				if token == INVALID_TOKEN {
-					return fmt.Sprintf("%d:Unknown keyword : %s", RESP_IDENTIFIER_ERROR, lex)
-				}
-				_, err := synChcker(token)
-				if err == EMPTY {
-					keywords = append(keywords, lex)
-					lex = ""
-				} else {
-					return err
-				}
-			}
-			continue
-		} else if chr == SQUOTE || chr == DQUOTE {
-			if strval == 0 {
-				if lex == EMPTY {
-					strval = chr
-				} else {
-					return fmt.Sprintf("%d:Unexpected %c after %s", RESP_SYNTAX_ERROR, chr, lex)
-				}
-			} else if strval == chr {
-				_, err := synChcker(STRING_TOKEN)
-				if err != EMPTY {
-					return err
-				}
-				keywords = append(keywords, lex)
-				lex = ""
-				strval = 0
-			}
-			continue
+	// conver the received length buffer to numeric value
+	ln, err := strconv.ParseInt(string(size), 10, 32)
+	if err != nil {
+		logger.Print(err)
+		return "X"
+	}
+
+	// this will start reading the query from the client using a small buffer
+	for cur != ln {
+		n, err := (*conn).Read(buff)
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			logger.Print(err)
+			return "X"
 		}
 
-		lex += string(chr)
+		s := string(buff[:n])
+		cur += int64(n)
+
+		for i := 0; i < n; i++ {
+			chr := s[i]
+			if (chr == SPACE || chr == TAB || chr == LINE || chr == END) && strval == 0 {
+				if lex != EMPTY {
+					token = Lex(&lex)
+					if token == INVALID_TOKEN {
+						return fmt.Sprintf("%d:Unknown keyword : %s", RESP_IDENTIFIER_ERROR, lex)
+					}
+					_, err := synChcker(token)
+					if err == EMPTY {
+						keywords = append(keywords, lex)
+						lex = ""
+					} else {
+						return err
+					}
+				}
+				continue
+			} else if chr == SQUOTE || chr == DQUOTE {
+				if strval == 0 {
+					if lex == EMPTY {
+						strval = chr
+					} else {
+						return fmt.Sprintf("%d:Unexpected %c after %s", RESP_SYNTAX_ERROR, chr, lex)
+					}
+				} else if strval == chr {
+					_, err := synChcker(STRING_TOKEN)
+					if err != EMPTY {
+						return err
+					}
+					keywords = append(keywords, lex)
+					lex = ""
+					strval = 0
+				}
+				continue
+			}
+
+			lex += string(chr)
+		}
 	}
 
 	if lex == EMPTY {
@@ -76,7 +111,7 @@ func Execute(s *string) string {
 		if strval != 0 {
 			return fmt.Sprintf("%d:Missing %c", RESP_SYNTAX_ERROR, strval)
 		} else {
-			logger.Printf("Parse error : %s", *s)
+			logger.Printf("Parse error : %s", s)
 			return fmt.Sprintf("%d:Parse error", RESP_SYNTAX_ERROR)
 		}
 	}

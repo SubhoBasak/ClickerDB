@@ -62,7 +62,6 @@ func Lex(s *string) int {
 		return TYPE_TOKEN
 	default:
 		{
-			logger.Print(*s)
 			c := (*s)[0]
 			if c > 47 && c < 58 || c == '+' || c == '-' {
 				// check if the string starts with 0-9 or + or -

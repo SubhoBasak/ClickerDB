@@ -669,3 +669,81 @@ func Xor(k *string, v *string) string {
 		return fmt.Sprintf("E:Can't perform XOR on type %s", t)
 	}
 }
+
+func LShift(k *string, v *string) string {
+	t, ok := typeMap[*k]
+	if !ok {
+		return MSG_KEY_NOT_FOUND
+	}
+
+	switch t {
+	case INT:
+		i, err := strconv.ParseInt(*v, 10, 8)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT_INVALID
+		}
+		tmp := i8Map[*k] << int8(i)
+		i8Map[*k] = tmp
+		return fmt.Sprint(tmp)
+	case INT16:
+		i, err := strconv.ParseInt(*v, 10, 16)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT16_INVALID
+		}
+		tmp := i16Map[*k] << int16(i)
+		i16Map[*k] = tmp
+		return fmt.Sprint(tmp)
+	case INT32:
+		i, err := strconv.ParseInt(*v, 10, 32)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT32_INVALID
+		}
+		tmp := i32Map[*k] << int32(i)
+		i32Map[*k] = tmp
+		return fmt.Sprint(tmp)
+	default:
+		return fmt.Sprintf("E:Can't perform XOR on type %s", t)
+	}
+}
+
+func RShift(k *string, v *string) string {
+	t, ok := typeMap[*k]
+	if !ok {
+		return MSG_KEY_NOT_FOUND
+	}
+
+	switch t {
+	case INT:
+		i, err := strconv.ParseInt(*v, 10, 8)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT_INVALID
+		}
+		tmp := i8Map[*k] >> int8(i)
+		i8Map[*k] = tmp
+		return fmt.Sprint(tmp)
+	case INT16:
+		i, err := strconv.ParseInt(*v, 10, 16)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT16_INVALID
+		}
+		tmp := i16Map[*k] >> int16(i)
+		i16Map[*k] = tmp
+		return fmt.Sprint(tmp)
+	case INT32:
+		i, err := strconv.ParseInt(*v, 10, 32)
+		if err != nil {
+			logger.Println(err)
+			return MSG_INT32_INVALID
+		}
+		tmp := i32Map[*k] >> int32(i)
+		i32Map[*k] = tmp
+		return fmt.Sprint(tmp)
+	default:
+		return fmt.Sprintf("E:Can't perform XOR on type %s", t)
+	}
+}
